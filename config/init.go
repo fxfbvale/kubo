@@ -48,7 +48,7 @@ func InitWithIdentity(identity Identity) (*Config, error) {
 		},
 
 		Routing: Routing{
-			Type:    nil,
+			Type:    NewOptionalString("dhtclient"),
 			Methods: nil,
 			Routers: nil,
 		},

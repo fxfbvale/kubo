@@ -3,6 +3,8 @@ package coreapi
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -20,6 +22,22 @@ import (
 	ci "github.com/libp2p/go-libp2p/core/crypto"
 	peer "github.com/libp2p/go-libp2p/core/peer"
 )
+
+var (
+	PublishLogger *log.Logger
+	ResolveLogger *log.Logger
+)
+
+func init() {
+	pubFile, err := os.OpenFile("publish.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	resFile, err := os.OpenFile("resolve.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		panic(err)
+	}
+
+	PublishLogger = log.New(pubFile, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+	ResolveLogger = log.New(resFile, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+}
 
 type NameAPI CoreAPI
 
@@ -85,16 +103,29 @@ func (api *NameAPI) Publish(ctx context.Context, p path.Path, opts ...caopts.Nam
 		publishOptions = append(publishOptions, nsopts.PublishWithTTL(*options.TTL))
 	}
 
+	//valeLogs
+	pid, err := peer.IDFromPrivateKey(k)
+	if err != nil {
+		return nil, err
+	}
+	PublishLogger.Println("Publishing", coreiface.FormatKeyID(pid))
+	ctx = context.WithValue(ctx, "ipns", true)
+	t1 := time.Now()
+
 	err = api.namesys.Publish(ctx, k, pth, publishOptions...)
 	if err != nil {
 		return nil, err
 	}
 
+	/** -> maybe this is needed
 	pid, err := peer.IDFromPrivateKey(k)
 	if err != nil {
 		return nil, err
 	}
+	**/
 
+	//valeLogs
+	PublishLogger.Println("Published", coreiface.FormatKeyID(pid), "in", time.Since(t1))
 	return &ipnsEntry{
 		name:  coreiface.FormatKeyID(pid),
 		value: p,
@@ -155,6 +186,11 @@ func (api *NameAPI) Resolve(ctx context.Context, name string, opts ...caopts.Nam
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
+	//valeLogs
+	ctx = context.WithValue(ctx, "ipns", true)
+	ResolveLogger.Println("Resolving", name)
+	t1 := time.Now()
+
 	results, err := api.Search(ctx, name, opts...)
 	if err != nil {
 		return nil, err
@@ -169,6 +205,9 @@ func (api *NameAPI) Resolve(ctx context.Context, name string, opts ...caopts.Nam
 			break
 		}
 	}
+
+	//valeLogs
+	ResolveLogger.Println("Resolved", name, "to", p, "in", time.Since(t1))
 
 	return p, err
 }
