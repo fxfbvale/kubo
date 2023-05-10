@@ -25,7 +25,9 @@ import (
 
 var (
 	PublishLogger *log.Logger
+	ErrPublishLogger *log.Logger
 	ResolveLogger *log.Logger
+	ErrResolveLogger *log.Logger
 )
 
 func init() {
@@ -36,7 +38,9 @@ func init() {
 	}
 
 	PublishLogger = log.New(pubFile, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+	ErrPublishLogger = log.New(pubFile, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
 	ResolveLogger = log.New(resFile, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+	ErrResolveLogger = log.New(resFile, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
 type NameAPI CoreAPI
@@ -114,6 +118,7 @@ func (api *NameAPI) Publish(ctx context.Context, p path.Path, opts ...caopts.Nam
 
 	err = api.namesys.Publish(ctx, k, pth, publishOptions...)
 	if err != nil {
+		ErrPublishLogger.Println("Failed to publish", coreiface.FormatKeyID(pid), "in", time.Since(t1))
 		return nil, err
 	}
 
@@ -193,6 +198,7 @@ func (api *NameAPI) Resolve(ctx context.Context, name string, opts ...caopts.Nam
 
 	results, err := api.Search(ctx, name, opts...)
 	if err != nil {
+		ErrResolveLogger.Println("Failed to resolve", name, "in", time.Since(t1))
 		return nil, err
 	}
 
