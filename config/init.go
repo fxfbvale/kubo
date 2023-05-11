@@ -60,7 +60,8 @@ func InitWithIdentity(identity Identity) (*Config, error) {
 		},
 
 		Ipns: Ipns{
-			ResolveCacheSize: 128,
+			ResolveCacheSize: 1,
+			RepublishPeriod: "12h",
 		},
 
 		Gateway: Gateway{
