@@ -2,9 +2,9 @@ module github.com/ipfs/kubo
 
 replace (
 	//github.com/ipfs/go-namesys v0.7.0 => ../../NameSys/go-namesys
-	github.com/ipfs/go-namesys v0.7.0 => github.com/fxfbvale/go-namesys v0.0.0-20230510214048-31dcc439d07d
+	github.com/ipfs/go-namesys v0.7.0 => github.com/fxfbvale/go-namesys v0.0.0-20230511214043-5fe157563ceb
 	//github.com/libp2p/go-libp2p-kad-dht v0.21.1 => ../../Kademlia-DHT/go-libp2p-kad-dht
-	github.com/libp2p/go-libp2p-kad-dht v0.21.1 => github.com/fxfbvale/go-libp2p-kad-dht v0.0.0-20230510214130-79db0c21f1b2
+	github.com/libp2p/go-libp2p-kad-dht v0.21.1 => github.com/fxfbvale/go-libp2p-kad-dht v0.0.0-20230511214102-dd252736fb9d
 )
 
 require (

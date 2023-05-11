@@ -3,6 +3,7 @@ package coreapi
 import (
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	"log"
 	"os"
 	"strings"
@@ -37,10 +38,10 @@ func init() {
 		panic(err)
 	}
 
-	PublishLogger = log.New(pubFile, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
-	ErrPublishLogger = log.New(pubFile, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
-	ResolveLogger = log.New(resFile, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
-	ErrResolveLogger = log.New(resFile, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+	PublishLogger = log.New(pubFile, "INFO: ", log.Ldate|log.Lmicroseconds|log.Lshortfile)
+	ErrPublishLogger = log.New(pubFile, "ERROR: ", log.Ldate|log.Lmicroseconds|log.Lshortfile)
+	ResolveLogger = log.New(resFile, "INFO: ", log.Ldate|log.Lmicroseconds|log.Lshortfile)
+	ErrResolveLogger = log.New(resFile, "ERROR: ", log.Ldate|log.Lmicroseconds|log.Lshortfile)
 }
 
 type NameAPI CoreAPI
@@ -112,13 +113,14 @@ func (api *NameAPI) Publish(ctx context.Context, p path.Path, opts ...caopts.Nam
 	if err != nil {
 		return nil, err
 	}
-	PublishLogger.Println("Publishing", coreiface.FormatKeyID(pid))
 	ctx = context.WithValue(ctx, "ipns", true)
+	ctx = context.WithValue(ctx, "id", uuid.New().String())
+	PublishLogger.Println("ID:", ctx.Value("id"), "Publishing", coreiface.FormatKeyID(pid))
 	t1 := time.Now()
 
 	err = api.namesys.Publish(ctx, k, pth, publishOptions...)
 	if err != nil {
-		ErrPublishLogger.Println("Failed to publish", coreiface.FormatKeyID(pid), "in", time.Since(t1))
+		ErrPublishLogger.Println("ID:", ctx.Value("id"), "Failed to publish", coreiface.FormatKeyID(pid), "in", time.Since(t1))
 		return nil, err
 	}
 
@@ -130,7 +132,7 @@ func (api *NameAPI) Publish(ctx context.Context, p path.Path, opts ...caopts.Nam
 	**/
 
 	//valeLogs
-	PublishLogger.Println("Published", coreiface.FormatKeyID(pid), "in", time.Since(t1))
+	PublishLogger.Println("ID:", ctx.Value("id"), "Published", coreiface.FormatKeyID(pid), "in", time.Since(t1))
 	return &ipnsEntry{
 		name:  coreiface.FormatKeyID(pid),
 		value: p,
@@ -193,12 +195,13 @@ func (api *NameAPI) Resolve(ctx context.Context, name string, opts ...caopts.Nam
 
 	//valeLogs
 	ctx = context.WithValue(ctx, "ipns", true)
-	ResolveLogger.Println("Resolving", name)
+	ctx = context.WithValue(ctx, "id", uuid.New().String())
+	ResolveLogger.Println("ID:", ctx.Value("id"), "Resolving", name)
 	t1 := time.Now()
 
 	results, err := api.Search(ctx, name, opts...)
 	if err != nil {
-		ErrResolveLogger.Println("Failed to resolve", name, "in", time.Since(t1))
+		ErrResolveLogger.Println("ID:", ctx.Value("id"), "Failed to resolve", name, "in", time.Since(t1))
 		return nil, err
 	}
 
@@ -213,7 +216,7 @@ func (api *NameAPI) Resolve(ctx context.Context, name string, opts ...caopts.Nam
 	}
 
 	//valeLogs
-	ResolveLogger.Println("Resolved", name, "to", p, "in", time.Since(t1))
+	ResolveLogger.Println("ID:", ctx.Value("id"), "Resolved", name, "to", p, "in", time.Since(t1))
 
 	return p, err
 }
