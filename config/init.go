@@ -61,7 +61,7 @@ func InitWithIdentity(identity Identity) (*Config, error) {
 
 		Ipns: Ipns{
 			ResolveCacheSize: 1,
-			RepublishPeriod: "12h",
+			RepublishPeriod:  "12h",
 		},
 
 		Gateway: Gateway{
@@ -139,7 +139,7 @@ func DefaultDatastoreConfig() Datastore {
 	return Datastore{
 		StorageMax:         "10GB",
 		StorageGCWatermark: 90, // 90%
-		GCPeriod:           "1h",
+		GCPeriod:           "25s",
 		BloomFilterSize:    0,
 		Spec:               flatfsSpec(),
 	}
