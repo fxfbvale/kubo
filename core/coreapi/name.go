@@ -25,9 +25,9 @@ import (
 )
 
 var (
-	PublishLogger *log.Logger
+	PublishLogger    *log.Logger
 	ErrPublishLogger *log.Logger
-	ResolveLogger *log.Logger
+	ResolveLogger    *log.Logger
 	ErrResolveLogger *log.Logger
 )
 
@@ -194,6 +194,8 @@ func (api *NameAPI) Resolve(ctx context.Context, name string, opts ...caopts.Nam
 	defer cancel()
 
 	//valeLogs
+	opts = append(opts, caopts.Name.Cache(false))
+	opts = append(opts, caopts.Name.ResolveOption(nsopts.DhtTimeout(time.Hour)))
 	ctx = context.WithValue(ctx, "ipns", true)
 	ctx = context.WithValue(ctx, "id", uuid.New().String())
 	ResolveLogger.Println("ID:", ctx.Value("id"), "Resolving", name)

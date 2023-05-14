@@ -139,7 +139,7 @@ func DefaultDatastoreConfig() Datastore {
 	return Datastore{
 		StorageMax:         "10GB",
 		StorageGCWatermark: 90, // 90%
-		GCPeriod:           "25s",
+		GCPeriod:           "1h",
 		BloomFilterSize:    0,
 		Spec:               flatfsSpec(),
 	}
