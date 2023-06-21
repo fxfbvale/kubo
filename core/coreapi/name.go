@@ -194,8 +194,15 @@ func (api *NameAPI) Resolve(ctx context.Context, name string, opts ...caopts.Nam
 	defer cancel()
 
 	//valeLogs
+	//set no cache option
 	opts = append(opts, caopts.Name.Cache(false))
+
+	//set DHT timeout
 	opts = append(opts, caopts.Name.ResolveOption(nsopts.DhtTimeout(time.Hour)))
+
+	//set DHT Nr Records to 5
+	opts = append(opts, caopts.Name.ResolveOption(nsopts.DhtRecordCount(5)))
+
 	ctx = context.WithValue(ctx, "ipns", true)
 	ctx = context.WithValue(ctx, "id", uuid.New().String())
 	ResolveLogger.Println("ID:", ctx.Value("id"), "Resolving", name)
