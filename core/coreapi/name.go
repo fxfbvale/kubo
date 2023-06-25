@@ -115,6 +115,7 @@ func (api *NameAPI) Publish(ctx context.Context, p path.Path, opts ...caopts.Nam
 	}
 	ctx = context.WithValue(ctx, "ipns", true)
 	ctx = context.WithValue(ctx, "id", uuid.New().String())
+	ctx = context.WithValue(ctx, "pKey", k)
 	PublishLogger.Println("ID:", ctx.Value("id"), "Publishing", coreiface.FormatKeyID(pid))
 	t1 := time.Now()
 
@@ -200,8 +201,8 @@ func (api *NameAPI) Resolve(ctx context.Context, name string, opts ...caopts.Nam
 	//set DHT timeout
 	opts = append(opts, caopts.Name.ResolveOption(nsopts.DhtTimeout(time.Hour)))
 
-	//set DHT Nr Records to 5
-	opts = append(opts, caopts.Name.ResolveOption(nsopts.DhtRecordCount(5)))
+	//set DHT Nr Records to 4
+	opts = append(opts, caopts.Name.ResolveOption(nsopts.DhtRecordCount(4)))
 
 	ctx = context.WithValue(ctx, "ipns", true)
 	ctx = context.WithValue(ctx, "id", uuid.New().String())
