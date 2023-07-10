@@ -4,7 +4,7 @@ replace (
 	//github.com/ipfs/go-namesys v0.7.0 => ../../NameSys/go-namesys
 	github.com/ipfs/go-namesys v0.7.0 => github.com/fxfbvale/go-namesys v0.0.0-20230511214043-5fe157563ceb
 	//github.com/libp2p/go-libp2p-kad-dht v0.21.1 => ../../Kademlia-DHT/go-libp2p-kad-dht
-	github.com/libp2p/go-libp2p-kad-dht v0.21.1 => github.com/fxfbvale/go-libp2p-kad-dht v0.0.0-20230625224300-400ffe9fc130
+	github.com/libp2p/go-libp2p-kad-dht v0.21.1 => github.com/fxfbvale/go-libp2p-kad-dht v0.0.0-20230710212725-2769369e8a12
 )
 
 require (
