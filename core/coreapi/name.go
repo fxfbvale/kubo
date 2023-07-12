@@ -202,7 +202,7 @@ func (api *NameAPI) Resolve(ctx context.Context, name string, opts ...caopts.Nam
 	opts = append(opts, caopts.Name.ResolveOption(nsopts.DhtTimeout(time.Hour)))
 
 	//set DHT Nr Records to 4
-	opts = append(opts, caopts.Name.ResolveOption(nsopts.DhtRecordCount(4)))
+	opts = append(opts, caopts.Name.ResolveOption(nsopts.DhtRecordCount(5)))
 
 	ctx = context.WithValue(ctx, "ipns", true)
 	ctx = context.WithValue(ctx, "id", uuid.New().String())
